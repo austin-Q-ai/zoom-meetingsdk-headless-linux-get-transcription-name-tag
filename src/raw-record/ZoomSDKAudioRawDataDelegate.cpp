@@ -1,6 +1,6 @@
 #include "ZoomSDKAudioRawDataDelegate.h"
 
-ZoomSDKAudioRawDataDelegate::ZoomSDKAudioRawDataDelegate(bool useMixedAudio) : m_useMixedAudio(useMixedAudio)
+ZoomSDKAudioRawDataDelegate::ZoomSDKAudioRawDataDelegate(bool useMixedAudio, IMeetingService* m_meetingServiceT) : m_useMixedAudio(useMixedAudio), m_meetingService(m_meetingServiceT)
 {
 
 }
@@ -25,9 +25,11 @@ void ZoomSDKAudioRawDataDelegate::onMixedAudioRawDataReceived(AudioRawData *data
 
 
 void ZoomSDKAudioRawDataDelegate::onOneWayAudioRawDataReceived(AudioRawData* data, uint32_t node_id) {
-    if (m_useMixedAudio) return;
+    // if (m_useMixedAudio) return;
 
     stringstream path;
+    auto participantCtl = m_meetingService->GetMeetingParticipantsController();
+    Log::info(participantCtl->GetUserByUserID(node_id)->GetUserName());
     path << m_dir << "/node-" << node_id << ".pcm";
     writeToFile(path.str(), data);
 }
